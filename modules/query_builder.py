@@ -1,21 +1,23 @@
 # FILE: modules/query_builder.py
 import streamlit as st
-import os
 import requests
-from dotenv import load_dotenv
 
-load_dotenv()
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Use Streamlit secrets instead of dotenv
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY")
+OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY")
+
 
 def query_builder_ui():
     st.header("📂 AI Legal Query Builder")
     st.write("Compose structured legal queries with ease.")
 
-    party = st.text_input("Party Involved (e.g., Landlord, Employer, Government)")
-    issue = st.text_input("Legal Issue (e.g., Breach of contract, Land dispute, Arrest)")
+    party = st.text_input(
+        "Party Involved (e.g., Landlord, Employer, Government)")
+    issue = st.text_input(
+        "Legal Issue (e.g., Breach of contract, Land dispute, Arrest)")
     location = st.text_input("Location or Jurisdiction")
-    context = st.text_area("Case Context (short background, relevant clauses or sections)")
+    context = st.text_area(
+        "Case Context (short background, relevant clauses or sections)")
 
     if st.button("Generate Legal Query"):
         query_prompt = f"""
@@ -47,9 +49,11 @@ Compose a concise legal question that could be used to query Nigerian law databa
                 }
                 response = requests.post(url, headers=headers, json=payload)
                 if response.status_code == 200:
-                    structured_query = response.json()["choices"][0]["message"]["content"]
+                    structured_query = response.json(
+                    )["choices"][0]["message"]["content"]
                 else:
-                    st.error(f"Groq API error: {response.status_code} {response.text}")
+                    st.error(
+                        f"Groq API error: {response.status_code} {response.text}")
                     structured_query = None
 
             # Fallback to OpenAI if Groq API key missing or error
@@ -69,16 +73,14 @@ Compose a concise legal question that could be used to query Nigerian law databa
                     structured_query = None
 
             else:
-                st.error("No valid API key found. Please set GROQ_API_KEY or OPENAI_API_KEY in your environment.")
+                st.error(
+                    "No valid API key found. Please set GROQ_API_KEY or OPENAI_API_KEY in your environment.")
                 structured_query = None
 
         if structured_query:
             st.subheader("🧠 AI-Generated Legal Query")
             st.code(structured_query)
             st.success("✅ Legal query created")
-
-
-
 
 
 # # FILE: modules/query_builder.py
