@@ -1,10 +1,17 @@
-import streamlit as st
-from modules.chat_assistant import chat_interface
-from modules.document_reviewer import document_review_ui
-# from modules.voice_to_text import voice_to_text_ui
-from modules.legal_template import template_builder_ui
-from modules.law_search import law_search_ui
 from modules.query_builder import query_builder_ui
+from modules.law_search import law_search_ui
+from modules.legal_template import template_builder_ui
+from modules.document_reviewer import document_review_ui
+from modules.chat_assistant import chat_interface
+import streamlit as st
+import sys
+from pathlib import Path
+
+# Add the project root to Python path
+project_root = Path(__file__).parent
+sys.path.append(str(project_root))
+
+# from modules.voice_to_text import voice_to_text_ui
 
 # -------------------- CONFIG --------------------
 st.set_page_config(page_title="Naija Legal AI Assistant", layout="wide")
@@ -45,9 +52,9 @@ elif selection == "📂 AI Query Panel":
     query_builder_ui()
 
 
-
 # -------------------- SIDEBAR FOOTER WITH BETA LABEL --------------------
-st.sidebar.markdown("""<br><br><br><br><br><br><br>""", unsafe_allow_html=True)  # Push down
+st.sidebar.markdown("""<br><br><br><br><br><br><br>""",
+                    unsafe_allow_html=True)  # Push down
 
 st.sidebar.markdown(
     '<p style="font-size: 17px; text-align: center; color: #47D1FD;"><em>Beta Release</em></p>',
@@ -92,9 +99,6 @@ custom_css = """
 st.markdown(custom_css, unsafe_allow_html=True)
 
 
-
-
-
 # # FILE: app.py
 # import streamlit as st
 # from modules.chat_assistant import chat_interface
@@ -134,7 +138,6 @@ st.markdown(custom_css, unsafe_allow_html=True)
 
 # # .env file should include:
 # # GROQ_API_KEY=your_groq_api_key_here
-
 
 
 # # # FILE: app.py
