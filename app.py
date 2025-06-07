@@ -1,15 +1,35 @@
-from modules.query_builder import query_builder_ui
-from modules.law_search import law_search_ui
-from modules.legal_template import template_builder_ui
-from modules.document_reviewer import document_review_ui
-from modules.chat_assistant import chat_interface
 import streamlit as st
 import sys
 from pathlib import Path
+import traceback
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Add the project root to Python path
 project_root = Path(__file__).parent
 sys.path.append(str(project_root))
+
+# Log all potential import errors
+try:
+    from modules.query_builder import query_builder_ui
+    from modules.law_search import law_search_ui
+    from modules.legal_template import template_builder_ui
+    from modules.document_reviewer import document_review_ui
+    from modules.chat_assistant import chat_interface
+except Exception as e:
+    logger.error(f"Import Error: {str(e)}")
+    logger.error(traceback.format_exc())
+    st.error(f"Module Import Error: {str(e)}")
+    st.code(traceback.format_exc())
+    st.stop()
+
+# Log environment and path information
+logger.info(f"Python Path: {sys.path}")
+logger.info(f"Current Directory: {Path.cwd()}")
+logger.info(f"Project Root: {project_root}")
 
 # from modules.voice_to_text import voice_to_text_ui
 
