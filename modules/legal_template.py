@@ -1,16 +1,16 @@
 # FILE: modules/legal_template.py
 import streamlit as st
-import os
 import requests
-from dotenv import load_dotenv
 
-load_dotenv()
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Use Streamlit secrets instead of dotenv
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY")
+OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY")
+
 
 def template_builder_ui():
     st.header("📝 Legal Template Generator")
-    st.write("Draft NDAs, leases, contracts using AI trained on Nigerian legal structures.")
+    st.write(
+        "Draft NDAs, leases, contracts using AI trained on Nigerian legal structures.")
 
     template_type = st.selectbox("Choose document type", [
         "Non-Disclosure Agreement (NDA)",
@@ -20,7 +20,8 @@ def template_builder_ui():
         "Partnership Agreement"
     ])
 
-    key_terms = st.text_area("Enter key terms (e.g. parties, duration, location, obligations, etc.)")
+    key_terms = st.text_area(
+        "Enter key terms (e.g. parties, duration, location, obligations, etc.)")
 
     if st.button("Generate Document"):
         prompt = f"""
@@ -47,9 +48,11 @@ The output should be formatted as a complete legal document under Nigerian law.
                 }
                 response = requests.post(url, headers=headers, json=payload)
                 if response.status_code == 200:
-                    document = response.json()["choices"][0]["message"]["content"]
+                    document = response.json(
+                    )["choices"][0]["message"]["content"]
                 else:
-                    st.error(f"Groq API error: {response.status_code} {response.text}")
+                    st.error(
+                        f"Groq API error: {response.status_code} {response.text}")
                     document = None
 
             # Fallback to OpenAI if Groq not available or error
@@ -68,15 +71,14 @@ The output should be formatted as a complete legal document under Nigerian law.
                     st.error(f"OpenAI API error: {e}")
                     document = None
             else:
-                st.error("No valid API key found. Please set GROQ_API_KEY or OPENAI_API_KEY in your environment.")
+                st.error(
+                    "No valid API key found. Please set GROQ_API_KEY or OPENAI_API_KEY in your environment.")
                 document = None
 
         if document:
             st.subheader("📄 Generated Document")
             st.code(document, language="markdown")
             st.success("✅ Template generated")
-
-
 
 
 # # FILE: modules/legal_templates.py

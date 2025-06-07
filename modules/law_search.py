@@ -1,18 +1,18 @@
 # FILE: modules/law_search.py
 import streamlit as st
-import os
 import requests
-from dotenv import load_dotenv
 
-load_dotenv()
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Use Streamlit secrets instead of dotenv
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY")
+OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY")
+
 
 def law_search_ui():
     st.header("🔍 Nigerian Law Search")
     st.write("Search Nigerian laws and acts (e.g., NDLEA Act, EFCC Act, Land Use Act)")
 
-    query = st.text_input("Enter a legal term, section, or phrase to search Nigerian law")
+    query = st.text_input(
+        "Enter a legal term, section, or phrase to search Nigerian law")
 
     if st.button("Search Law") and query:
         prompt = f"""
@@ -40,9 +40,11 @@ Ensure your explanation references the appropriate Nigerian Act or legal framewo
                 }
                 response = requests.post(url, headers=headers, json=payload)
                 if response.status_code == 200:
-                    explanation = response.json()["choices"][0]["message"]["content"]
+                    explanation = response.json(
+                    )["choices"][0]["message"]["content"]
                 else:
-                    st.error(f"Groq API error: {response.status_code} {response.text}")
+                    st.error(
+                        f"Groq API error: {response.status_code} {response.text}")
                     explanation = None
 
             # Fallback to OpenAI API if Groq key missing or error
@@ -62,16 +64,14 @@ Ensure your explanation references the appropriate Nigerian Act or legal framewo
                     explanation = None
 
             else:
-                st.error("No valid API key found. Please set GROQ_API_KEY or OPENAI_API_KEY in your environment.")
+                st.error(
+                    "No valid API key found. Please set GROQ_API_KEY or OPENAI_API_KEY in your environment.")
                 explanation = None
 
         if explanation:
             st.subheader("📚 Explanation")
             st.write(explanation)
             st.success("✅ Law explained successfully")
-
-
-
 
 
 # # FILE: modules/law_search.py

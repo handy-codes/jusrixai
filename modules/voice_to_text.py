@@ -6,27 +6,31 @@ import json
 from dotenv import load_dotenv
 import httpx  # you need to pip install httpx
 
-load_dotenv()
+# Use Streamlit secrets instead of dotenv
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY")
+# Hypothetical Groq endpoint
+GROQ_API_URL = "https://api.groq.com/openai/v1/audio/transcriptions"
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GROQ_API_URL = "https://api.groq.com/openai/v1/audio/transcriptions"  # Hypothetical Groq endpoint
 
 def voice_to_text_ui():
     st.header("🎤 Voice to Text - Legal AI Assistant (via Groq LLaMA 3)")
 
-    audio_file = st.file_uploader("Upload your voice recording (MP3, WAV, M4A)", type=["mp3", "wav", "m4a"])
+    audio_file = st.file_uploader(
+        "Upload your voice recording (MP3, WAV, M4A)", type=["mp3", "wav", "m4a"])
 
     if audio_file is not None:
         with st.spinner("Transcribing audio using Groq LLaMA 3..."):
             try:
                 if not GROQ_API_KEY:
-                    st.error("No Groq API key found. Please set GROQ_API_KEY in your environment.")
+                    st.error(
+                        "No Groq API key found. Please set GROQ_API_KEY in your environment.")
                     return
 
                 # Prepare multipart/form-data for file upload
                 files = {
                     "file": (audio_file.name, audio_file, audio_file.type),
-                    "model": (None, "whisper-1"),  # keep the same model name or change based on Groq docs
+                    # keep the same model name or change based on Groq docs
+                    "model": (None, "whisper-1"),
                     "response_format": (None, "json")
                 }
 
@@ -35,7 +39,8 @@ def voice_to_text_ui():
                 }
 
                 with httpx.Client(timeout=30) as client:
-                    response = client.post(GROQ_API_URL, headers=headers, files=files)
+                    response = client.post(
+                        GROQ_API_URL, headers=headers, files=files)
 
                 response.raise_for_status()
                 data = response.json()
@@ -50,12 +55,10 @@ def voice_to_text_ui():
                     st.error("No transcription text found in the response.")
 
             except httpx.HTTPStatusError as e:
-                st.error(f"HTTP error: {e.response.status_code} - {e.response.text}")
+                st.error(
+                    f"HTTP error: {e.response.status_code} - {e.response.text}")
             except Exception as e:
                 st.error(f"Error during transcription: {e}")
-
-
-
 
 
 # # FILE: modules/voice_to_text.py
@@ -93,7 +96,6 @@ def voice_to_text_ui():
 #                 st.subheader("📝 Transcription")
 #                 st.write(transcript_text)
 #                 st.success("✅ Transcription completed successfully")
-
 
 
 # # FILE: modules/voice_to_text.py
@@ -136,7 +138,6 @@ def voice_to_text_ui():
 #                 st.subheader("📝 Transcription")
 #                 st.write(transcript_text)
 #                 st.success("✅ Transcription completed successfully")
-
 
 
 # # FILE: modules/voice_to_text.py

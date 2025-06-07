@@ -5,14 +5,16 @@ import os
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Use Streamlit secrets instead of dotenv
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY")
+OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY")
+
 
 def extract_text_from_pdf(uploaded_file):
     with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
         text = "\n".join(page.get_text() for page in doc)
     return text
+
 
 def summarize_and_flag(text):
     prompt = f"""
@@ -61,8 +63,10 @@ Document:
             st.error(f"OpenAI API error: {e}")
             return None
 
-    st.error("No valid API key found. Please set GROQ_API_KEY or OPENAI_API_KEY in your environment.")
+    st.error(
+        "No valid API key found. Please set GROQ_API_KEY or OPENAI_API_KEY in your environment.")
     return None
+
 
 def document_review_ui():
     st.header("📜 Upload Legal Document for Review")
@@ -80,8 +84,6 @@ def document_review_ui():
             st.subheader("🧠 AI Analysis Summary")
             st.write(analysis)
             st.success("✅ Review Complete")
-
-
 
 
 # # FILE: modules/document_reviewer.py
