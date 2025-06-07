@@ -8,7 +8,7 @@ from modules.query_builder import query_builder_ui
 
 # -------------------- CONFIG --------------------
 st.set_page_config(page_title="Naija Legal AI Assistant", layout="wide")
-st.title("No. 1 Nigeria Legal AI Platform")
+st.title("Nigeria's no. 1 Legal AI Platform")
 
 # -------------------- LOGIN GATE --------------------
 # def login():
